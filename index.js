@@ -4,7 +4,6 @@ const url = require('url');
 
 http.createServer((req, res) => {
     const q = url.parse(req.url, true);
-    console.log(q.pathname);
     let filename = q.pathname === '/' ? './index.html' : `.${q.pathname}`;
 
     if (filename !== './about.html' &&
