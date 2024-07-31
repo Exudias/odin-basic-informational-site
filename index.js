@@ -1,19 +1,31 @@
-const http = require('http');
 const fs = require('fs');
-const url = require('url');
+const express = require('express');
 
-http.createServer((req, res) => {
-    const q = url.parse(req.url, true);
-    let filename = q.pathname === '/' ? './index.html' : `.${q.pathname}`;
+const app = express();
 
-    if (filename !== './about.html' &&
-        filename !== './contact-me.html' &&
-        filename !== './index.html'
-    )
-    {
-        filename = './404.html';
-    }
+app.get('/contact-me.html', (req, res) => {
+    readAndWriteHTMLToRes('contact-me.html', res);
+});
 
+app.get('/about.html', (req, res) => {
+    readAndWriteHTMLToRes('about.html', res);
+});
+
+app.get('/index.html', (req, res) => {
+    readAndWriteHTMLToRes('index.html', res);
+});
+
+app.get('/', (req, res) => {
+    readAndWriteHTMLToRes('index.html', res);
+});
+
+app.use((req, res, next) => {
+    readAndWriteHTMLToRes('404.html', res);
+});
+
+
+function readAndWriteHTMLToRes(filename, res)
+{
     fs.readFile(filename, (err, data) => {
         if (err)
         {
@@ -25,4 +37,7 @@ http.createServer((req, res) => {
         res.write(data);
         return res.end();
     });
-}).listen(8080);
+}
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log(`Basic Informational Site - listening on port ${PORT}!`));
